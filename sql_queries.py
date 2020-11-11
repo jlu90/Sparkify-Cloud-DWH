@@ -39,6 +39,7 @@ time_table_create = ("""
 """)
 
 # STAGING TABLES
+## Data imported from S3 Bucket (JSON files)
 
 staging_events_copy = ("""
 """).format()
