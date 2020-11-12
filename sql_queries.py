@@ -16,8 +16,8 @@ artist_table_drop = "DROP TABLE IF EXISTS artists"
 time_table_drop = "DROP TABLE IF EXISTS time"
 
 # CREATE TABLES
-
-staging_events_table_create= ("""
+# For staging tables, read-in all data as a string (VARCHAR)
+staging_events_table_create = ("""
 CREATE TABLE IF NOT EXISTS staging_events (
     artist VARCHAR,
     auth VARCHAR,
@@ -40,21 +40,74 @@ CREATE TABLE IF NOT EXISTS staging_events (
 """)
 
 staging_songs_table_create = ("""
+CREATE TABLE IF NOT EXISTS staging_songs (
+    num_songs VARCHAR,
+    artist_id VARCHAR,
+    artist_latitude VARCHAR,
+    artist_longitude VARCHAR,
+    artist_location VARCHAR,
+    artist_name VARCHAR,
+    song_id VARCHAR,
+    title VARCHAR, 
+    duration VARCHAR,
+    year VARCHAR
+)
 """)
 
 songplay_table_create = ("""
+CREATE TABLE IF NOT EXISTS songplays (
+    songplay_id IDENTITY (0,1) PRIMARY KEY,
+    start_time TIME(6) NOT NULL REFERENCES time(start_time),
+    user_id INT NOT NULL REFERENCES users(user_id),
+    level VARCHAR,
+    song_id VARCHAR REFERENCES songs(song_id),
+    artist_id VARCHAR REFERENCES artists(artist_id),
+    session_id INT NOT NULL,
+    location VARCHAR,
+    user_agent VARCHAR
+)
 """)
 
 user_table_create = ("""
+CREATE TABLE IF NOT EXISTS users (
+    user_id INT PRIMARY KEY,
+    first_name VARCHAR,
+    last_name VARCHAR,
+    gender VARCHAR(1),
+    level VARCHAR
+)
 """)
 
 song_table_create = ("""
+CREATE TABLE IF NOT EXISTS songs (
+    song_id VARCHAR PRIMARY KEY,
+    title VARCHAR,
+    artist_id VARCHAR NOT NULL REFERENCES artists(artist_id),
+    year INT,
+    duration FLOAT
+)
 """)
 
 artist_table_create = ("""
+CREATE TABLE IF NOT EXISTS artists (
+    artist_id VARCHAR PRIMARY KEY,
+    name VARCHAR,
+    location VARCHAR,
+    latitude FLOAT,
+    longitude FLOAT
+)
 """)
 
 time_table_create = ("""
+CREATE TABLE IF NOT EXISTS time (
+    start_time TIME(6) PRIMARY KEY,
+    hour INT,
+    day INT,
+    week INT,
+    month INT,
+    year INT,
+    weekday VARCHAR
+)
 """)
 
 # STAGING TABLES
