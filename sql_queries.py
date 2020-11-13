@@ -91,7 +91,7 @@ CREATE TABLE IF NOT EXISTS artists (
 
 time_table_create = ("""
 CREATE TABLE IF NOT EXISTS time (
-    start_time TIME(6) PRIMARY KEY,
+    start_time TIMESTAMP PRIMARY KEY,
     hour INT,
     day INT,
     week INT,
@@ -104,7 +104,7 @@ CREATE TABLE IF NOT EXISTS time (
 songplay_table_create = ("""
 CREATE TABLE IF NOT EXISTS songplays (
     songplay_id INT IDENTITY (0,1) PRIMARY KEY,
-    start_time TIME(6) NOT NULL REFERENCES time(start_time),
+    start_time TIMESTAMP NOT NULL REFERENCES time(start_time),
     user_id INT NOT NULL REFERENCES users(user_id),
     level VARCHAR,
     song_id VARCHAR REFERENCES songs(song_id),
@@ -134,19 +134,49 @@ json 'auto'
 
 # FINAL TABLES
 
-songplay_table_insert = ("""
-""")
-
 user_table_insert = ("""
+INSERT INTO users (user_id, first_name, last_name, gender, level)
+VALUES(
+    SELECT DISTINCT se.userId, se.firstName, se.lastName, se.gender, se.level
+    FROM staging_events se
+    WHERE se.userId IS NOT NULL
+)
 """)
 
 song_table_insert = ("""
+INSERT INTO songs (song_id, title, artist_id, year, duration)
+VALUES (
+    SELECT DISTINCT s.song_id, s.title, s.artist_id, s.year, s.duration
+    FROM staging_songs s
+    WHERE s.song_id IS NOT NULL
+)
 """)
 
 artist_table_insert = ("""
+INSERT INTO artists (artist_id, name, location, latitude, longitude)
+VALUES (
+    SELECT DISTINCT s.artist_id, s.artist_name, s.artist_location, s.artist_latitude, s.artist_longitude
+    FROM staging_songs s
+    WHERE s.artist_id IS NOT NULL
+)
 """)
 
 time_table_insert = ("""
+INSERT INTO time (start_time, hour, day, week, month, year, weekday)
+VALUES (
+    SELECT DISTINCT s.start_time, EXTRACT(HOUR FROM s.start_time), EXTRACT(DAY FROM s.start_time), EXTRACT(WEEK FROM s.start_time), EXTRACT(MONTH FROM s.start_time), EXTRACT(YEAR FROM s.start_time), EXTRACT(WEEKDAY FROM s.start_time)
+    FROM songplays s
+)
+""")
+
+songplay_table_insert = ("""
+INSERT INTO songplays (start_time, user_id, level, song_id, artist_id, session_id, location, user_agent)
+VALUES (
+    SELECT DISTINCT timestamp 'epoch' + se.ts/1000 * interval '1 second' as start_time, se.userId, se.level, s.song_id, a.artist_id, se.sessionId, se.location, se.userAgent
+    FROM staging_events se 
+        LEFT JOIN songs s ON s.title = se.song
+        LEFT JOIN artists a ON a.name = se.artist
+    WHERE s.artist_id = a.artist_id)
 """)
 
 # QUERY LISTS
