@@ -4,18 +4,21 @@ from sql_queries import create_table_queries, drop_table_queries
 
 
 def drop_tables(cur, conn):
+    '''Drops existing tables'''
     for query in drop_table_queries:
         cur.execute(query)
         conn.commit()
 
 
 def create_tables(cur, conn):
+    '''Creates tables according to queries written in sql_queries.py'''
     for query in create_table_queries:
         cur.execute(query)
         conn.commit()
 
 
 def main():
+    '''Reads credentials from dwh.cfg, connects to a Redshift database, and drops/adds staging tables and fact/dimension tables'''
     config = configparser.ConfigParser(interpolation=None)
     config.read('dwh.cfg')
 

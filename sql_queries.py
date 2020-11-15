@@ -1,7 +1,7 @@
 import configparser
 
 
-# CONFIG
+# CONFIG INFORMATION
 config = configparser.ConfigParser(interpolation=None)
 config.read('dwh.cfg')
 IAM_ROLE = config.get('IAM_ROLE', 'ARN')
@@ -23,20 +23,20 @@ time_table_drop = "DROP TABLE IF EXISTS time CASCADE"
 
 staging_events_table_create = ("""
 CREATE TABLE IF NOT EXISTS staging_events (
-    artist VARCHAR,
-    auth VARCHAR,
-    firstName VARCHAR,
-    gender VARCHAR(1),
+    artist VARCHAR(255),
+    auth VARCHAR(20),
+    firstName VARCHAR(100),
+    gender CHARACTER,
     itemInSession INT,
-    lastName VARCHAR,
+    lastName VARCHAR(100),
     length FLOAT,
-    level VARCHAR,
-    location VARCHAR,
-    method VARCHAR,
-    page VARCHAR,
+    level VARCHAR(20),
+    location VARCHAR(255),
+    method VARCHAR(10),
+    page VARCHAR(20),
     registration FLOAT,
     sessionId INT,
-    song VARCHAR,
+    song VARCHAR(255),
     status INT,
     ts BIGINT,
     userAgent TEXT,
@@ -47,33 +47,47 @@ CREATE TABLE IF NOT EXISTS staging_events (
 staging_songs_table_create = ("""
 CREATE TABLE IF NOT EXISTS staging_songs (
     num_songs INT,
-    artist_id VARCHAR NOT NULL,
+    artist_id VARCHAR(20) NOT NULL,
     artist_latitude FLOAT,
     artist_longitude FLOAT,
-    artist_location VARCHAR,
-    artist_name VARCHAR,
-    song_id VARCHAR NOT NULL,
-    title VARCHAR NOT NULL, 
+    artist_location VARCHAR(255),
+    artist_name VARCHAR(255),
+    song_id VARCHAR(20) NOT NULL,
+    title VARCHAR(255) NOT NULL, 
     duration FLOAT,
     year INT
 )
 """)
 
+songplay_table_create = ("""
+CREATE TABLE IF NOT EXISTS songplays (
+    songplay_id INT IDENTITY (0,1) PRIMARY KEY DISTKEY,
+    start_time TIMESTAMP NOT NULL SORTKEY REFERENCES time(start_time),
+    user_id INT REFERENCES users(user_id),
+    level VARCHAR(20),
+    song_id VARCHAR(20) REFERENCES songs(song_id),
+    artist_id VARCHAR(20) REFERENCES artists(artist_id),
+    session_id INT NOT NULL,
+    location VARCHAR(255),
+    user_agent TEXT
+)
+""")
+
 user_table_create = ("""
 CREATE TABLE IF NOT EXISTS users (
-    user_id INT PRIMARY KEY,
-    first_name VARCHAR,
-    last_name VARCHAR,
-    gender VARCHAR(1),
-    level VARCHAR
+    user_id INT PRIMARY KEY SORTKEY DISTKEY,
+    first_name VARCHAR(100),
+    last_name VARCHAR(100),
+    gender CHARACTER,
+    level VARCHAR(20)
 )
 """)
 
 song_table_create = ("""
 CREATE TABLE IF NOT EXISTS songs (
-    song_id VARCHAR PRIMARY KEY,
-    title VARCHAR NOT NULL,
-    artist_id VARCHAR NOT NULL REFERENCES artists(artist_id),
+    song_id VARCHAR(20) PRIMARY KEY SORTKEY DISTKEY,
+    title VARCHAR(255) NOT NULL,
+    artist_id VARCHAR(20) NOT NULL REFERENCES artists(artist_id),
     year INT,
     duration FLOAT
 )
@@ -81,9 +95,9 @@ CREATE TABLE IF NOT EXISTS songs (
 
 artist_table_create = ("""
 CREATE TABLE IF NOT EXISTS artists (
-    artist_id VARCHAR PRIMARY KEY,
-    name VARCHAR,
-    location VARCHAR,
+    artist_id VARCHAR(20) PRIMARY KEY SORTKEY DISTKEY,
+    name VARCHAR(255),
+    location VARCHAR(255),
     latitude FLOAT,
     longitude FLOAT
 )
@@ -91,27 +105,13 @@ CREATE TABLE IF NOT EXISTS artists (
 
 time_table_create = ("""
 CREATE TABLE IF NOT EXISTS time (
-    start_time TIMESTAMP PRIMARY KEY,
+    start_time TIMESTAMP PRIMARY KEY SORTKEY DISTKEY,
     hour INT,
     day INT,
     week INT,
     month INT,
     year INT,
     weekday VARCHAR
-)
-""")
-
-songplay_table_create = ("""
-CREATE TABLE IF NOT EXISTS songplays (
-    songplay_id INT IDENTITY (0,1) PRIMARY KEY,
-    start_time TIMESTAMP NOT NULL REFERENCES time(start_time),
-    user_id INT NOT NULL REFERENCES users(user_id),
-    level VARCHAR,
-    song_id VARCHAR REFERENCES songs(song_id),
-    artist_id VARCHAR REFERENCES artists(artist_id),
-    session_id INT NOT NULL,
-    location VARCHAR,
-    user_agent TEXT
 )
 """)
 
