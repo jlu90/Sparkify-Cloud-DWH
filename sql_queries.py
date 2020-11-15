@@ -47,13 +47,13 @@ CREATE TABLE IF NOT EXISTS staging_events (
 staging_songs_table_create = ("""
 CREATE TABLE IF NOT EXISTS staging_songs (
     num_songs INT,
-    artist_id VARCHAR(20) NOT NULL,
+    artist_id VARCHAR(20),
     artist_latitude FLOAT,
     artist_longitude FLOAT,
     artist_location VARCHAR(255),
     artist_name VARCHAR(255),
-    song_id VARCHAR(20) NOT NULL,
-    title VARCHAR(255) NOT NULL, 
+    song_id VARCHAR(20),
+    title VARCHAR(255), 
     duration FLOAT,
     year INT
 )
@@ -61,13 +61,13 @@ CREATE TABLE IF NOT EXISTS staging_songs (
 
 songplay_table_create = ("""
 CREATE TABLE IF NOT EXISTS songplays (
-    songplay_id INT IDENTITY (0,1) PRIMARY KEY DISTKEY,
-    start_time TIMESTAMP NOT NULL SORTKEY REFERENCES time(start_time),
-    user_id INT REFERENCES users(user_id),
+    songplay_id INT IDENTITY (0,1) PRIMARY KEY,
+    start_time TIMESTAMP NOT NULL REFERENCES time(start_time),
+    user_id INT NOT NULL REFERENCES users(user_id),
     level VARCHAR(20),
-    song_id VARCHAR(20) REFERENCES songs(song_id),
-    artist_id VARCHAR(20) REFERENCES artists(artist_id),
-    session_id INT NOT NULL,
+    song_id VARCHAR(20) NOT NULL REFERENCES songs(song_id),
+    artist_id VARCHAR(20) NOT NULL REFERENCES artists(artist_id),
+    session_id INT,
     location VARCHAR(255),
     user_agent TEXT
 )
@@ -75,7 +75,7 @@ CREATE TABLE IF NOT EXISTS songplays (
 
 user_table_create = ("""
 CREATE TABLE IF NOT EXISTS users (
-    user_id INT PRIMARY KEY SORTKEY DISTKEY,
+    user_id INT PRIMARY,
     first_name VARCHAR(100),
     last_name VARCHAR(100),
     gender CHARACTER,
@@ -85,8 +85,8 @@ CREATE TABLE IF NOT EXISTS users (
 
 song_table_create = ("""
 CREATE TABLE IF NOT EXISTS songs (
-    song_id VARCHAR(20) PRIMARY KEY SORTKEY DISTKEY,
-    title VARCHAR(255) NOT NULL,
+    song_id VARCHAR(20) PRIMARY KEY,
+    title VARCHAR(255),
     artist_id VARCHAR(20) NOT NULL REFERENCES artists(artist_id),
     year INT,
     duration FLOAT
@@ -95,7 +95,7 @@ CREATE TABLE IF NOT EXISTS songs (
 
 artist_table_create = ("""
 CREATE TABLE IF NOT EXISTS artists (
-    artist_id VARCHAR(20) PRIMARY KEY SORTKEY DISTKEY,
+    artist_id VARCHAR(20) PRIMARY KEY,
     name VARCHAR(255),
     location VARCHAR(255),
     latitude FLOAT,
@@ -105,7 +105,7 @@ CREATE TABLE IF NOT EXISTS artists (
 
 time_table_create = ("""
 CREATE TABLE IF NOT EXISTS time (
-    start_time TIMESTAMP PRIMARY KEY SORTKEY DISTKEY,
+    start_time TIMESTAMP PRIMARY KEY,
     hour INT,
     day INT,
     week INT,
