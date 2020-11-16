@@ -20,7 +20,7 @@ def create_tables(cur, conn):
 def main():
     '''Reads credentials from dwh.cfg, connects to a Redshift database, and drops/adds staging tables and fact/dimension tables'''
     config = configparser.ConfigParser(interpolation=None)
-    config.read('dwh_private.cfg')
+    config.read('dwh.cfg')
 
     conn = psycopg2.connect("host={} dbname={} user={} password={} port={}".format(*config['CLUSTER'].values()))
     cur = conn.cursor()

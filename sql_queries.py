@@ -3,7 +3,7 @@ import configparser
 
 # CONFIG INFORMATION
 config = configparser.ConfigParser(interpolation=None)
-config.read('dwh_private.cfg')
+config.read('dwh.cfg')
 IAM_ROLE = config.get('IAM_ROLE', 'ARN')
 LOG_DATA = config.get('S3', 'LOG_DATA')
 LOG_JSONPATH = config.get('S3', 'LOG_JSONPATH')
