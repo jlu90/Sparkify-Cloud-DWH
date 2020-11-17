@@ -23,4 +23,4 @@ As a data engineer at Sparkify, I have been tasked with building an ETL pipeline
 4. Use the Query Editor in the Amazon Redshift console to query your database. It will be found under the *public* schema.
 5. Delete Redshift cluster
 
-**NOTE**: This project was completed for Udacity's Data Engineering Nanodegree
+**NOTE**: This project was completed for Udacity's Data Engineering Nanodegree Program
