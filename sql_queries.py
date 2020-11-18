@@ -116,7 +116,7 @@ CREATE TABLE IF NOT EXISTS time (
 """)
 
 # STAGING TABLES
-## Data imported from S3 Bucket (JSON files)
+## Data imported from Udacity S3 Bucket (JSON files)
 
 staging_events_copy = ("""
 COPY staging_events FROM {}

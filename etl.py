@@ -20,7 +20,7 @@ def insert_tables(cur, conn):
 
 
 def main():
-    '''Reads credentials from dwh.cfg, connects to a Redshift database, extracts data from S3 and loads it into staging tables, transfer data from staging tables to dimension tables'''
+    '''Reads credentials from dwh.cfg, connects to a Redshift database, extracts data from S3 and loads it into staging tables, transfers data from staging tables and loads it into dimension tables'''
     config = configparser.ConfigParser(interpolation=None)
     config.read('dwh.cfg')
 
